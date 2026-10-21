@@ -1,10 +1,10 @@
 <?php
 
-$servidor = 'localhost';
-$porta = '3306';
-$banco = 'loja_games';
-$usuario = 'root';
-$senha = '';
+$servidor = getenv('DB_HOST') ?: 'localhost';
+$porta = getenv('DB_PORT') ?: '3306';
+$banco = getenv('DB_NAME') ?: 'loja_games';
+$usuario = getenv('DB_USER') ?: 'root';
+$senha = getenv('DB_PASSWORD') ?: '';
 
 try {
     $pdo = new PDO(
