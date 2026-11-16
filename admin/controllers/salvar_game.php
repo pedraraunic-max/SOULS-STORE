@@ -4,6 +4,7 @@ require_once __DIR__ . '/../config/funcoes.php';
 exigirAdmin();
 exigirPostValido();
 require_once __DIR__ . '/../models/games.php';
+require_once __DIR__ . '/../models/categorias.php';
 
 // Impede que campos esperados como texto sejam enviados como arrays.
 $campos = [
@@ -12,7 +13,7 @@ $campos = [
     'descricao',
     'preco',
     'estoque',
-    'categoria',
+    'categoria_id',
     'imagem',
 ];
 
@@ -43,7 +44,11 @@ if ($idTexto !== '') {
 $titulo = trim($_POST['titulo'] ?? '');
 $descricao = trim($_POST['descricao'] ?? '');
 $preco = str_replace(',', '.', trim($_POST['preco'] ?? ''));
-$categoria = trim($_POST['categoria'] ?? '');
+$categoriaId = filter_var(
+    $_POST['categoria_id'] ?? '',
+    FILTER_VALIDATE_INT,
+    ['options' => ['min_range' => 1]]
+);
 $imagem = trim($_POST['imagem'] ?? '');
 
 $estoque = filter_var(
@@ -69,8 +74,8 @@ if ($titulo === '' || $comprimento($titulo) > 100) {
     $erros[] = 'Informe um título com até 100 caracteres.';
 }
 
-if ($comprimento($categoria) > 50) {
-    $erros[] = 'A categoria deve ter até 50 caracteres.';
+if ($categoriaId === false || !(new Categoria())->buscarPorId($categoriaId)) {
+    $erros[] = 'Selecione uma categoria cadastrada.';
 }
 
 if ($comprimento($imagem) > 255) {
@@ -113,7 +118,7 @@ $game = new Game([
     'descricao' => $descricao,
     'preco' => $preco,
     'estoque' => $estoque,
-    'categoria' => $categoria,
+    'categoria_id' => $categoriaId,
     'imagem' => $imagem,
 ]);
 

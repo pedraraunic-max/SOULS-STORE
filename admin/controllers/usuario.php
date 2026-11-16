@@ -19,7 +19,7 @@ function mostrarErroUsuario($mensagem, $status = 422)
 }
 
 // Os campos deste formulário devem ser textos, nunca arrays.
-foreach (['acao', 'id', 'nome', 'email', 'senha', 'tipo'] as $campo) {
+foreach (['acao', 'id', 'nome', 'email', 'telefone', 'senha', 'tipo'] as $campo) {
     if (isset($_POST[$campo]) && !is_string($_POST[$campo])) {
         mostrarErroUsuario('Formato de campo inválido.', 400);
     }
@@ -82,6 +82,7 @@ try {
 
     $nome = trim($_POST['nome'] ?? '');
     $email = strtolower(trim($_POST['email'] ?? ''));
+    $telefone = trim($_POST['telefone'] ?? '');
 
     // Não usamos trim na senha: espaços podem fazer parte dela.
     $senha = $_POST['senha'] ?? '';
@@ -107,6 +108,18 @@ try {
 
     if (!in_array($tipo, ['admin', 'user'], true)) {
         mostrarErroUsuario('Tipo de usuário inválido.');
+    }
+
+    $digitosTelefone = preg_replace('/\D+/', '', $telefone);
+    if (
+        strlen($telefone) > 30
+        || ($tipo === 'user' && (
+            strlen($digitosTelefone) < 8
+            || strlen($digitosTelefone) > 15
+            || !preg_match('/^[+0-9 ()-]+$/D', $telefone)
+        ))
+    ) {
+        mostrarErroUsuario('Informe um telefone válido para a conta de cliente.');
     }
 
     if (
@@ -146,9 +159,9 @@ try {
     }
 
     if ($id === null) {
-        $model->cadastrar($nome, $email, $senha, $tipo);
+        $model->cadastrar($nome, $email, $senha, $tipo, $telefone);
     } else {
-        $model->editar($id, $nome, $email, $senha, $tipo);
+        $model->editar($id, $nome, $email, $senha, $tipo, $telefone);
     }
 
     redirecionar('../views/ver_usuarios.php');
@@ -157,6 +170,9 @@ try {
     // Código de entrada duplicada no MySQL/MariaDB.
     if ((int) ($erro->errorInfo[1] ?? 0) === 1062) {
         mostrarErroUsuario('Esse e-mail já está cadastrado.', 409);
+    }
+    if ((int) ($erro->errorInfo[1] ?? 0) === 1451) {
+        mostrarErroUsuario('Esta conta possui pedidos vinculados. Exclua os pedidos antes de remover o usuário.', 409);
     }
 
     error_log($erro->getMessage());

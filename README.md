@@ -1,29 +1,55 @@
-# SOULS STORE
+# Souls Store
 
-Loja de games em PHP com catálogo, cadastro e login de usuários e área administrativa. O banco usa MySQL/MariaDB.
+Loja acadêmica em PHP 8 para jogos soulslike, com autenticação, painel administrativo, cadastro de clientes, categorias, jogos e pedidos simulados.
 
-## Rodar localmente
+## Requisitos técnicos
 
-1. Crie o banco `loja_games` no MySQL.
-2. Importe [`database/schema.sql`](database/schema.sql).
-3. Se necessário, ajuste as variáveis no ambiente. Sem elas, a aplicação usa `localhost:3306`, banco `loja_games`, usuário `root` e senha vazia.
-4. Abra o projeto pelo Apache do XAMPP ou rode `php -S 127.0.0.1:8000 -t .` na pasta do projeto, com a extensão PDO MySQL habilitada.
+- PHP 8.0 ou superior;
+- MySQL ou MariaDB;
+- PDO com `pdo_mysql` habilitado;
+- Modelos orientados a objetos em `admin/models/`;
+- Controllers em `admin/controllers/` e páginas da loja/painel em `admin/views/`;
+- Banco relacional com chaves estrangeiras entre jogos/categorias e pedidos/clientes/jogos.
 
-## Publicar no Render
+## Executar com XAMPP
 
-O projeto inclui um `Dockerfile` para o serviço PHP/Apache. O Apache usa a porta definida por `PORT` (padrão `10000` no Render).
+1. Copie a pasta para `htdocs/loja_games`.
+2. Inicie Apache e MySQL.
+3. No phpMyAdmin, crie o banco `loja_games`.
+4. Para uma instalação nova, importe [`database/schema.sql`](database/schema.sql). Esse arquivo cria as tabelas relacionais e inclui os seis jogos soulslike.
+5. Abra `http://localhost/loja_games/`.
 
-1. Crie um serviço MySQL privado com armazenamento persistente e escolha `loja_games` como banco. O Render oferece MySQL como serviço personalizado com disco; confira os custos e o tamanho do disco antes de criar.
-2. Crie um **Web Service** a partir deste repositório e selecione o runtime **Docker**.
-3. Nas variáveis de ambiente do serviço PHP, configure `DB_HOST`, `DB_PORT` (`3306`), `DB_NAME`, `DB_USER` e `DB_PASSWORD`, usando os dados internos do serviço MySQL. Guarde a senha somente nas variáveis do painel do Render.
-4. Importe `database/schema.sql` no banco de produção. O arquivo cria as tabelas para uma instalação nova; se já houver dados, faça backup e confira a estrutura antes de importar.
-5. Cadastre uma conta pela tela de registro e transforme-a em administradora seguindo [`CONFIGURAR_ACESSOS.md`](CONFIGURAR_ACESSOS.md). Depois, cadastre os jogos no painel.
+Sem variáveis de ambiente, a conexão usa `localhost:3306`, banco `loja_games`, usuário `root` e senha vazia. Se sua instalação for diferente, configure `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`.
 
-O catálogo começa vazio quando o banco é novo. As imagens cadastradas no painel devem estar disponíveis por uma URL acessível pelo navegador.
+### Atualizar um banco de uma versão anterior
 
-## Acessos
+Faça uma exportação de segurança no phpMyAdmin antes de alterar o banco. Em uma instalação antiga que ainda usa `compras` e `games.categoria` como texto, importe [`database/migrations/academico_crud.sql`](database/migrations/academico_crud.sql) uma vez. A migração cria categorias e pedidos relacionais, adiciona telefone aos usuários e copia compras antigas para pedidos, mantendo a tabela antiga como cópia.
 
-- Vitrine: `/`
-- Entrar: `/login.php`
-- Criar conta: `/registrar.php`
-- Painel de jogos e usuários: links **Painel ADM** após entrar com uma conta administradora.
+O arquivo [`database/migrations/souls_store.sql`](database/migrations/souls_store.sql) é legado para substituir o catálogo de uma versão muito antiga; ele apaga o catálogo existente e não deve ser executado depois da migração acadêmica. [`database/migrations/biblioteca.sql`](database/migrations/biblioteca.sql) também é legado para a tabela `compras`; instalações novas usam `pedidos` desde o `schema.sql`.
+
+## Funcionalidades
+
+- Cadastro de clientes com nome, e-mail, telefone e senha;
+- login, logout, perfis de cliente/administrador, sessão protegida, CSRF e senhas com `password_hash()`;
+- CRUD administrativo de usuários, clientes, jogos, categorias e pedidos;
+- busca de jogos, filtros por coleção/categoria, lista de desejos e detalhes interativos;
+- capas/imagens de jogos e cadastro de estoque;
+- compra acadêmica sem pagamento real, com biblioteca por cliente;
+- relatório/resumo de pedidos no painel.
+
+## Primeiro administrador
+
+1. Crie uma conta pela tela **Criar conta**.
+2. No phpMyAdmin, selecione `loja_games` e execute, substituindo o e-mail:
+
+```sql
+UPDATE usuarios SET tipo = 'admin' WHERE email = 'seu-email@exemplo.com';
+```
+
+3. Saia e entre novamente para acessar o painel administrativo.
+
+Mais detalhes em [`CONFIGURAR_ACESSOS.md`](CONFIGURAR_ACESSOS.md).
+
+## GitHub
+
+O projeto é publicado em [pedraraunic-max/SOULS-STORE](https://github.com/pedraraunic-max/SOULS-STORE). Lembre-se de enviar commits locais ao repositório para que as mudanças mais recentes apareçam para outras pessoas.

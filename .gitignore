@@ -1,10 +1,5 @@
 .env
 .env.*
 !.env.example
-/vendor/
-/.idea/
-/.vscode/
-/.phpunit.cache/
-*.log
-Thumbs.db
 .DS_Store
+Thumbs.db

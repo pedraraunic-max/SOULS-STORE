@@ -2,8 +2,11 @@
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.use_strict_mode', '1');
+    ini_set('session.use_only_cookies', '1');
+    ini_set('session.use_trans_sid', '0');
 
-    $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || getenv('APP_FORCE_SECURE_COOKIE') === '1';
     session_set_cookie_params([
         'httponly' => true,
         'secure' => $https,
@@ -12,7 +15,21 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     ]);
 
     session_start();
+
+    $agora = time();
+    if (
+        isset($_SESSION['ultima_atividade'])
+        && $agora - (int) $_SESSION['ultima_atividade'] > 1800
+    ) {
+        $_SESSION = [];
+        session_regenerate_id(true);
+    }
+    $_SESSION['ultima_atividade'] = $agora;
 }
+
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
 
 function e($valor)
 {

@@ -29,6 +29,10 @@ try {
 
     $game->deletarGame();
 } catch (PDOException $erro) {
+    if ((int) ($erro->errorInfo[1] ?? 0) === 1451) {
+        http_response_code(409);
+        exit('Este jogo possui pedidos registrados. Exclua ou cancele os pedidos antes de removê-lo.');
+    }
     error_log($erro->getMessage());
 
     http_response_code(500);

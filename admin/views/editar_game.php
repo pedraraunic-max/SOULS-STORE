@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../config/funcoes.php';
 exigirAdmin();
 require_once __DIR__ . '/../models/games.php';
+require_once __DIR__ . '/../models/categorias.php';
 
 $id = filter_input(
     INPUT_GET,
@@ -26,5 +27,6 @@ if (!$dados) {
 }
 
 $tituloPagina = 'Editar jogo';
+$categoriasDisponiveis = (new Categoria())->listar();
 
 require __DIR__ . '/form_game.php';

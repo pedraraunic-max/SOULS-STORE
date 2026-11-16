@@ -27,9 +27,10 @@ $categorias = array_unique(array_filter(array_map(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#07111d">
-    <title>Painel de jogos — GameStock</title>
-    <link rel="stylesheet" href="../public/css/style.css">
+    <meta name="theme-color" content="#080b10">
+    <title>Painel de jogos — Souls Store</title>
+    <link rel="icon" type="image/svg+xml" href="<?= e(urlApp('admin/public/images/souls-store-icon.svg')) ?>">
+    <link rel="stylesheet" href="../public/css/style.css?v=20261116-crud">
 </head>
 <body class="pagina-admin">
 <main class="admin-container">

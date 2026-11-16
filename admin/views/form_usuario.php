@@ -46,9 +46,10 @@ $tituloPagina = $editando
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= e($tituloPagina) ?> — GameStock ADM</title>
+    <title><?= e($tituloPagina) ?> — Souls Store ADM</title>
+    <link rel="icon" type="image/svg+xml" href="<?= e(urlApp('admin/public/images/souls-store-icon.svg')) ?>">
 
-    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/style.css?v=20261116-crud">
 </head>
 <body class="pagina-admin">
 <main class="container">
@@ -103,6 +104,18 @@ $tituloPagina = $editando
                 required
                 value="<?= e($dados['email']) ?>"
             >
+        </label>
+
+        <label>
+            Telefone
+            <input
+                type="tel"
+                name="telefone"
+                maxlength="30"
+                autocomplete="tel"
+                value="<?= e($dados['telefone'] ?? '') ?>"
+            >
+            <small class="ajuda-campo">Obrigatório para contas de cliente; opcional para administradores.</small>
         </label>
 
         <label>

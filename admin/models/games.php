@@ -9,7 +9,7 @@ class Game
     public $descricao;
     public $preco;
     public $estoque;
-    public $categoria;
+    public $categoria_id;
     public $imagem;
 
     private $pdo;
@@ -19,47 +19,47 @@ class Game
         global $pdo;
 
         $this->pdo = $pdo;
-
         $this->id = $atributos['id'] ?? null;
         $this->titulo = $atributos['titulo'] ?? '';
         $this->descricao = $atributos['descricao'] ?? '';
         $this->preco = $atributos['preco'] ?? '0.00';
         $this->estoque = $atributos['estoque'] ?? 0;
-        $this->categoria = $atributos['categoria'] ?? '';
+        $this->categoria_id = $atributos['categoria_id'] ?? null;
         $this->imagem = $atributos['imagem'] ?? '';
     }
 
     public function listarGames()
     {
-        $stmt = $this->pdo->query(
-            'SELECT * FROM games ORDER BY titulo ASC'
-        );
-
-        return $stmt->fetchAll();
+        return $this->pdo->query(
+            'SELECT g.*, c.nome AS categoria
+             FROM games g
+             INNER JOIN categorias c ON c.id = g.categoria_id
+             ORDER BY g.titulo ASC'
+        )->fetchAll();
     }
 
-    public function listarCatalogo($nome = '', $categoria = '')
+    public function listarCatalogo($nome = '', $categoriaId = '')
     {
         $condicoes = [];
         $parametros = [];
 
         if ($nome !== '') {
-            $condicoes[] = 'titulo LIKE :nome';
+            $condicoes[] = 'g.titulo LIKE :nome';
             $parametros['nome'] = '%' . $nome . '%';
         }
 
-        if ($categoria !== '') {
-            $condicoes[] = 'categoria = :categoria';
-            $parametros['categoria'] = $categoria;
+        if ($categoriaId !== '') {
+            $condicoes[] = 'g.categoria_id = :categoria_id';
+            $parametros['categoria_id'] = $categoriaId;
         }
 
-        $sql = 'SELECT * FROM games';
-
+        $sql = 'SELECT g.*, c.nome AS categoria
+                FROM games g
+                INNER JOIN categorias c ON c.id = g.categoria_id';
         if ($condicoes) {
             $sql .= ' WHERE ' . implode(' AND ', $condicoes);
         }
-
-        $sql .= ' ORDER BY titulo ASC';
+        $sql .= ' ORDER BY g.titulo ASC';
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($parametros);
@@ -67,28 +67,16 @@ class Game
         return $stmt->fetchAll();
     }
 
-    public function listarCategorias()
-    {
-        $stmt = $this->pdo->query(
-            "SELECT DISTINCT categoria FROM games
-             WHERE categoria IS NOT NULL AND categoria <> ''
-             ORDER BY categoria ASC"
-        );
-
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
-
     public function buscarPorNome($nome)
     {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM games
-             WHERE titulo LIKE :nome
-             ORDER BY titulo ASC'
+            'SELECT g.*, c.nome AS categoria
+             FROM games g
+             INNER JOIN categorias c ON c.id = g.categoria_id
+             WHERE g.titulo LIKE :nome
+             ORDER BY g.titulo ASC'
         );
-
-        $stmt->execute([
-            'nome' => '%' . $nome . '%',
-        ]);
+        $stmt->execute(['nome' => '%' . $nome . '%']);
 
         return $stmt->fetchAll();
     }
@@ -96,12 +84,12 @@ class Game
     public function buscarGamePorId($id)
     {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM games WHERE id = :id'
+            'SELECT g.*, c.nome AS categoria
+             FROM games g
+             INNER JOIN categorias c ON c.id = g.categoria_id
+             WHERE g.id = :id'
         );
-
-        $stmt->execute([
-            'id' => $id,
-        ]);
+        $stmt->execute(['id' => $id]);
 
         return $stmt->fetch();
     }
@@ -110,19 +98,12 @@ class Game
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO games
-                (titulo, descricao, preco, estoque, categoria, imagem)
+                (titulo, descricao, preco, estoque, categoria_id, imagem)
              VALUES
-                (:titulo, :descricao, :preco, :estoque, :categoria, :imagem)'
+                (:titulo, :descricao, :preco, :estoque, :categoria_id, :imagem)'
         );
 
-        return $stmt->execute([
-            'titulo' => $this->titulo,
-            'descricao' => $this->descricao,
-            'preco' => $this->preco,
-            'estoque' => $this->estoque,
-            'categoria' => $this->categoria,
-            'imagem' => $this->imagem,
-        ]);
+        return $stmt->execute($this->atributosSql());
     }
 
     public function editarGame()
@@ -133,30 +114,32 @@ class Game
                 descricao = :descricao,
                 preco = :preco,
                 estoque = :estoque,
-                categoria = :categoria,
+                categoria_id = :categoria_id,
                 imagem = :imagem
              WHERE id = :id'
         );
+        $parametros = $this->atributosSql();
+        $parametros['id'] = $this->id;
 
-        return $stmt->execute([
-            'id' => $this->id,
-            'titulo' => $this->titulo,
-            'descricao' => $this->descricao,
-            'preco' => $this->preco,
-            'estoque' => $this->estoque,
-            'categoria' => $this->categoria,
-            'imagem' => $this->imagem,
-        ]);
+        return $stmt->execute($parametros);
     }
 
     public function deletarGame()
     {
-        $stmt = $this->pdo->prepare(
-            'DELETE FROM games WHERE id = :id'
-        );
+        $stmt = $this->pdo->prepare('DELETE FROM games WHERE id = :id');
 
-        return $stmt->execute([
-            'id' => $this->id,
-        ]);
+        return $stmt->execute(['id' => $this->id]);
+    }
+
+    private function atributosSql()
+    {
+        return [
+            'titulo' => $this->titulo,
+            'descricao' => $this->descricao,
+            'preco' => $this->preco,
+            'estoque' => $this->estoque,
+            'categoria_id' => $this->categoria_id,
+            'imagem' => $this->imagem,
+        ];
     }
 }

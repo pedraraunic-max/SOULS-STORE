@@ -18,9 +18,10 @@ if (!isset($tituloPagina) || !isset($dados) || !is_array($dados)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= e($tituloPagina) ?> — GameStock</title>
+    <title><?= e($tituloPagina) ?> — Souls Store</title>
+    <link rel="icon" type="image/svg+xml" href="<?= e(urlApp('admin/public/images/souls-store-icon.svg')) ?>">
 
-    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/style.css?v=20261116-crud">
 </head>
 <body class="pagina-admin">
 <main class="container">
@@ -97,12 +98,16 @@ if (!isset($tituloPagina) || !isset($dados) || !is_array($dados)) {
 
         <label>
             Categoria
-            <input
-                type="text"
-                name="categoria"
-                maxlength="50"
-                value="<?= e($dados['categoria'] ?? '') ?>"
-            >
+            <select name="categoria_id" required>
+                <?php foreach ($categoriasDisponiveis as $categoriaDisponivel): ?>
+                    <option value="<?= (int) $categoriaDisponivel['id'] ?>" <?= (int) ($dados['categoria_id'] ?? 0) === (int) $categoriaDisponivel['id'] ? 'selected' : '' ?>>
+                        <?= e($categoriaDisponivel['nome']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <?php if (!$categoriasDisponiveis): ?>
+                <small class="ajuda-campo">Cadastre uma categoria antes de criar um jogo.</small>
+            <?php endif; ?>
         </label>
 
         <label>

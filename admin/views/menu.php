@@ -1,26 +1,34 @@
 <?php
 $paginaAtual = basename($_SERVER['SCRIPT_NAME']);
-$abaUsuarios = in_array(
-    $paginaAtual,
-    ['ver_usuarios.php', 'form_usuario.php'],
-    true
-);
+$abas = [
+    'jogos' => ['ver_games.php', 'cadastrar_game.php', 'editar_game.php'],
+    'categorias' => ['ver_categorias.php', 'form_categoria.php'],
+    'clientes' => ['ver_clientes.php', 'form_cliente.php'],
+    'pedidos' => ['ver_pedidos.php', 'form_pedido.php'],
+    'usuarios' => ['ver_usuarios.php', 'form_usuario.php'],
+];
+$abaAtiva = 'jogos';
+foreach ($abas as $nomeAba => $paginas) {
+    if (in_array($paginaAtual, $paginas, true)) {
+        $abaAtiva = $nomeAba;
+        break;
+    }
+}
 $usuarioPainel = usuarioAutenticado();
 ?>
 
 <header class="cabecalho-admin">
     <a class="marca-loja" href="<?= e(urlApp('admin/views/ver_games.php')) ?>">
-        <span class="marca-loja__icone">G</span>
-        <span>GAME<span class="marca-loja__claro">STOCK</span></span>
+        <span class="marca-loja__icone" aria-hidden="true">✦</span>
+        <span>SOULS<span class="marca-loja__claro"> STORE</span></span>
     </a>
 
     <nav class="menu-admin" aria-label="Navegação do painel">
-        <a class="<?= !$abaUsuarios ? 'ativa' : '' ?>" href="<?= e(urlApp('admin/views/ver_games.php')) ?>" <?= !$abaUsuarios ? 'aria-current="page"' : '' ?>>
-            <span aria-hidden="true">▦</span> Jogos
-        </a>
-        <a class="<?= $abaUsuarios ? 'ativa' : '' ?>" href="<?= e(urlApp('admin/views/ver_usuarios.php')) ?>" <?= $abaUsuarios ? 'aria-current="page"' : '' ?>>
-            <span aria-hidden="true">♙</span> Usuários
-        </a>
+        <a class="<?= $abaAtiva === 'jogos' ? 'ativa' : '' ?>" href="<?= e(urlApp('admin/views/ver_games.php')) ?>" <?= $abaAtiva === 'jogos' ? 'aria-current="page"' : '' ?>><span aria-hidden="true">▦</span> Jogos</a>
+        <a class="<?= $abaAtiva === 'categorias' ? 'ativa' : '' ?>" href="<?= e(urlApp('admin/views/ver_categorias.php')) ?>" <?= $abaAtiva === 'categorias' ? 'aria-current="page"' : '' ?>><span aria-hidden="true">◈</span> Categorias</a>
+        <a class="<?= $abaAtiva === 'clientes' ? 'ativa' : '' ?>" href="<?= e(urlApp('admin/views/ver_clientes.php')) ?>" <?= $abaAtiva === 'clientes' ? 'aria-current="page"' : '' ?>><span aria-hidden="true">♙</span> Clientes</a>
+        <a class="<?= $abaAtiva === 'pedidos' ? 'ativa' : '' ?>" href="<?= e(urlApp('admin/views/ver_pedidos.php')) ?>" <?= $abaAtiva === 'pedidos' ? 'aria-current="page"' : '' ?>><span aria-hidden="true">▤</span> Pedidos</a>
+        <a class="<?= $abaAtiva === 'usuarios' ? 'ativa' : '' ?>" href="<?= e(urlApp('admin/views/ver_usuarios.php')) ?>" <?= $abaAtiva === 'usuarios' ? 'aria-current="page"' : '' ?>><span aria-hidden="true">⚙</span> Usuários</a>
     </nav>
 
     <div class="admin-conta">

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 600">
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#263b45"/><stop offset=".48" stop-color="#151e26"/><stop offset="1" stop-color="#070a0e"/></linearGradient>
+    <radialGradient id="moon"><stop stop-color="#d8d5c3" stop-opacity=".78"/><stop offset=".34" stop-color="#a8b2ae" stop-opacity=".24"/><stop offset="1" stop-color="#9fb0ae" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="450" height="600" fill="url(#bg)"/>
+  <circle cx="229" cy="220" r="170" fill="url(#moon)"/>
+  <circle cx="229" cy="220" r="91" fill="none" stroke="#d0d3c7" stroke-opacity=".32"/>
+  <path d="M0 433h42V305h26v-44h15v44h18v95h28V288h27v-81h20v81h27v132h24V285h18v-39h21v39h26v116h27V303h23v-47h17v47h25v130h44v167H0Z" fill="#090d12" fill-opacity=".9"/>
+  <path d="M211 224h36v13h-36zM219 237h20v142h-20zM203 375h52v9h-52z" fill="#bdc3b9" fill-opacity=".32"/>
+  <path d="M52 480c63-22 121-20 177-3 70-17 117-12 168 8" fill="none" stroke="#b4c2be" stroke-opacity=".26" stroke-width="3"/>
+  <path d="M0 0h450v600H0z" fill="none" stroke="#c8c5b4" stroke-opacity=".17" stroke-width="2"/>
+</svg>
