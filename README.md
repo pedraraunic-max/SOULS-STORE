@@ -3,7 +3,7 @@
 ## Identificação
 
 - **Projeto:** Souls Store
-- **Integrantes:** [PREENCHER COM OS NOMES DO GRUPO]
+- **Integrantes:** Pedro Henrique Santos Oliveira
 - **Tema:** loja acadêmica de jogos soulslike, com atmosfera gótica e catálogo inspirado em Dark Souls, Elden Ring, Sekiro e Bloodborne.
 
 ## Descrição do sistema
