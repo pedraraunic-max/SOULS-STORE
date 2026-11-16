@@ -1,5 +1,9 @@
 -- Estrutura completa para uma instalação nova da Souls Store.
--- Importe este arquivo no banco definido por DB_NAME (padrão: loja_games).
+-- Cria o banco padrão e todas as tabelas. Execute este arquivo uma vez.
+
+CREATE DATABASE IF NOT EXISTS loja_games
+    CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE loja_games;
 
 CREATE TABLE IF NOT EXISTS categorias (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -38,6 +42,10 @@ CREATE TABLE IF NOT EXISTS usuarios (
     PRIMARY KEY (id),
     UNIQUE KEY uk_usuarios_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Conta pública de cliente para demonstração local (não é administradora).
+INSERT IGNORE INTO usuarios (nome, email, telefone, senha, tipo) VALUES
+    ('Visitante de demonstração', 'demo@souls.store', '', '$2y$10$hkzuQfiXdHb61TjKeIpWzeFZK/v.BYyTQQpamq.9k8ExXdpJo.Dby', 'user');
 
 CREATE TABLE IF NOT EXISTS pedidos (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
