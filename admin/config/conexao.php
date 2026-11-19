@@ -1,5 +1,9 @@
 <?php
 
+// Este arquivo pode ser carregado dentro de uma função (ex.: exigirAdmin()
+// carrega Usuario sob demanda). Mantenha a conexão PDO no escopo global.
+global $pdo;
+
 $servidor = getenv('DB_HOST') ?: 'localhost';
 $porta = getenv('DB_PORT') ?: '3306';
 $banco = getenv('DB_NAME') ?: 'loja_games';
